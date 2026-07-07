@@ -1,0 +1,76 @@
+{
+  "spec_version": "0.1",
+  "generated_at": "2026-07-07T10:00:00Z",
+  "category": "coding",
+  "task": "Add offline support so the pantry list works without a network connection.",
+  "work_phase": "implement",
+  "project_summary": "Pantry is a small web app for tracking what food you have at home and what needs restocking. It has a static front end and a lightweight sync API.",
+  "current_direction": "Ship a v1 that works reliably on a phone in a grocery store, including on a weak connection.",
+  "decisions": [
+    {
+      "title": "Store the pantry list in IndexedDB",
+      "body": "Persist the list locally so the app opens instantly and works offline.",
+      "rationale": "Users mostly open the app in a store with poor signal, so local-first avoids a blank screen.",
+      "tradeoffs": "Adds sync-conflict handling later, but the offline win is worth it for v1.",
+      "outcome": "Cold open dropped from about 2s to under 200ms in testing.",
+      "evidence": [
+        {
+          "claim": "IndexedDB is supported across the target browsers",
+          "source": "https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API"
+        }
+      ]
+    },
+    {
+      "title": "No account required for v1",
+      "body": "The app works with a device-local list; sign-in comes later.",
+      "rationale": "Removing the sign-up wall is the fastest path to first value."
+    }
+  ],
+  "sources": [
+    {
+      "label": "MDN — IndexedDB API",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API",
+      "trust_grade": "primary",
+      "bound_claim": "IndexedDB is supported across the target browsers"
+    },
+    {
+      "label": "web.dev — Offline cookbook",
+      "url": "https://web.dev/articles/offline-cookbook",
+      "trust_grade": "reputable"
+    }
+  ],
+  "prompts": [
+    {
+      "text": "Given this IndexedDB wrapper, add a queue that retries failed writes when the connection returns. Keep it dependency-free.",
+      "tool": "Claude"
+    }
+  ],
+  "constraints": [
+    "No third-party runtime dependencies in the front end",
+    "Must work on the last two versions of mobile Safari and Chrome"
+  ],
+  "boundaries": [
+    "Do not change the sync API contract without flagging it",
+    "Do not add a build step that requires Node in the browser"
+  ],
+  "what_to_avoid": [
+    "localStorage for the list — its size limits and synchronous API caused jank",
+    "A full framework rewrite — ruled out for v1"
+  ],
+  "open_questions": [
+    "How should we resolve conflicts when the same item is edited on two devices?"
+  ],
+  "next_steps": [
+    "Add a write queue that retries when the network returns",
+    "Show a subtle 'offline, changes saved locally' indicator"
+  ],
+  "version_history": [
+    { "label": "v0.1", "status": "shipped", "summary": "Read-only pantry list, online only." },
+    { "label": "v0.2", "status": "active", "summary": "Local-first storage and offline reads." }
+  ],
+  "definition_of_done": "The pantry list loads and is editable with the network fully disabled, and pending edits sync automatically when the connection returns.",
+  "recommended_assistant": {
+    "type": "coding",
+    "reason": "The next steps are implementation-heavy (write queue, sync), so a coding assistant fits."
+  }
+}

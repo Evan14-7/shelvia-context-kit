@@ -1,0 +1,170 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://shelvia.net/schema/context-pack.schema.json",
+  "title": "Shelvia Context Pack",
+  "description": "A portable, reviewed bundle of project context handed from one AI tool to the next.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["spec_version", "project_summary"],
+  "properties": {
+    "spec_version": {
+      "type": "string",
+      "description": "The Context Pack format version this document targets.",
+      "examples": ["0.1"]
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the pack was generated (ISO 8601)."
+    },
+    "category": {
+      "type": "string",
+      "enum": ["general", "coding", "research", "writing", "design"],
+      "default": "general",
+      "description": "The kind of work this pack focuses on."
+    },
+    "task": {
+      "type": "string",
+      "description": "What the next tool is being asked to do with this pack."
+    },
+    "work_phase": {
+      "type": "string",
+      "enum": ["research", "plan", "implement"],
+      "description": "The phase this pack frames the next tool for."
+    },
+    "project_summary": {
+      "type": "string",
+      "minLength": 1,
+      "description": "A short plain-language description of the project."
+    },
+    "current_direction": {
+      "type": ["string", "null"],
+      "description": "Where the project is heading right now."
+    },
+    "decisions": {
+      "type": "array",
+      "description": "Approved decisions, with reasoning carried alongside.",
+      "items": { "$ref": "#/$defs/decision" }
+    },
+    "sources": {
+      "type": "array",
+      "description": "Trusted sources backing the work.",
+      "items": { "$ref": "#/$defs/source" }
+    },
+    "prompts": {
+      "type": "array",
+      "description": "Reusable prompts that worked well for this project.",
+      "items": { "$ref": "#/$defs/prompt" }
+    },
+    "constraints": {
+      "type": "array",
+      "description": "Hard rules the next tool must respect.",
+      "items": { "type": "string" }
+    },
+    "boundaries": {
+      "type": "array",
+      "description": "Stated guardrails for this handoff.",
+      "items": { "type": "string" }
+    },
+    "what_to_avoid": {
+      "type": "array",
+      "description": "Approaches already ruled out.",
+      "items": { "type": "string" }
+    },
+    "open_questions": {
+      "type": "array",
+      "description": "Unresolved questions the next tool should be aware of.",
+      "items": { "type": "string" }
+    },
+    "next_steps": {
+      "type": "array",
+      "description": "The recommended next actions.",
+      "items": { "type": "string" }
+    },
+    "version_history": {
+      "type": "array",
+      "description": "Notable prior versions or milestones.",
+      "items": { "$ref": "#/$defs/version_entry" }
+    },
+    "definition_of_done": {
+      "type": ["string", "null"],
+      "description": "How the next tool will know the task succeeded."
+    },
+    "recommended_assistant": {
+      "type": "object",
+      "description": "What kind of assistant to open next. Never a vendor name.",
+      "additionalProperties": false,
+      "required": ["type", "reason"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["coding", "research", "writing", "design", "planning", "debugging", "general"]
+        },
+        "reason": { "type": "string" }
+      }
+    }
+  },
+  "$defs": {
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title"],
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string", "minLength": 1 },
+        "body": { "type": ["string", "null"] },
+        "rationale": { "type": ["string", "null"] },
+        "tradeoffs": { "type": ["string", "null"] },
+        "outcome": { "type": ["string", "null"] },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["claim"],
+            "properties": {
+              "claim": { "type": "string" },
+              "source": { "type": ["string", "null"] }
+            }
+          }
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "url"],
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "type": "string", "minLength": 1 },
+        "url": { "type": "string", "format": "uri" },
+        "trust_grade": {
+          "type": "string",
+          "enum": ["primary", "reputable", "community", "unverified"],
+          "description": "How much the next tool should lean on this source."
+        },
+        "bound_claim": { "type": ["string", "null"] }
+      }
+    },
+    "prompt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text"],
+      "properties": {
+        "id": { "type": "string" },
+        "text": { "type": "string", "minLength": 1 },
+        "tool": { "type": ["string", "null"] }
+      }
+    },
+    "version_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "status"],
+      "properties": {
+        "label": { "type": "string" },
+        "status": { "type": "string" },
+        "summary": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

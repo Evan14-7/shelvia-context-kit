@@ -3,7 +3,8 @@
 ## Short version
 
 - **Shelvia.net** is a hosted product. It is **not** open source.
-- **Shelvia Context Packs** is an open format and toolkit. It **is** open source.
+- **Shelvia Context Kit** is an open format and toolkit — it produces **Context
+  Packs**. It **is** open source.
 
 The format is the artifact the product emits. You can use the format with no
 Shelvia account, and Shelvia is one (good) way to produce packs — not the only
@@ -11,7 +12,7 @@ way.
 
 ## Who does what
 
-| | Shelvia.net (hosted) | Context Packs (open source) |
+| | Shelvia.net (hosted) | Shelvia Context Kit (open source) |
 |---|---|---|
 | Import messy chats, screenshots, links, files | Yes | No |
 | Detect which AI a paste came from, extract prompts and links | Yes | No |

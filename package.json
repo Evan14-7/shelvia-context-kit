@@ -1,0 +1,36 @@
+{
+  "name": "shelvia-context-kit",
+  "version": "0.1.0",
+  "private": true,
+  "description": "An open format and toolkit for Context Packs — portable, reviewed project context for AI tools.",
+  "license": "MIT",
+  "type": "module",
+  "keywords": [
+    "context-pack",
+    "ai",
+    "agents",
+    "prompt",
+    "handoff",
+    "json-schema"
+  ],
+  "homepage": "https://github.com/Evan14-7/shelvia-context-kit#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Evan14-7/shelvia-context-kit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Evan14-7/shelvia-context-kit/issues"
+  },
+  "scripts": {
+    "check:json": "node scripts/check-json.mjs",
+    "validate:examples": "node scripts/validate-examples.mjs",
+    "test": "npm run check:json && npm run validate:examples"
+  },
+  "devDependencies": {
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

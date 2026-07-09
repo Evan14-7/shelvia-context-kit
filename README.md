@@ -110,4 +110,4 @@ whole Shelvia product is **not** open source — the Context Pack format is. See
 
 ## License
 
-MIT (suggested). See [`LICENSE`](LICENSE).
+MIT. See [`LICENSE`](LICENSE).

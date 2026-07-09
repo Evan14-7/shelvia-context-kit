@@ -2,39 +2,44 @@
 
 ## Reporting a vulnerability
 
-Please report security issues **privately** — do not open a public issue.
+Please report security issues privately. Do not open a public issue.
 
-- Preferred: use GitHub's private vulnerability reporting on this repository
-  (**Security -> Report a vulnerability**).
-- Alternative: email `security@shelvia.net`.
+Preferred: use GitHub's private vulnerability reporting on this repository.
 
-> Maintainer note: confirm the `security@shelvia.net` address is monitored, or
-> replace it with your preferred contact before publishing widely.
+Alternative: email security@shelvia.net.
 
-Please include steps to reproduce, affected files or versions, and the impact
-you observed. You will receive an acknowledgement as soon as reasonably possible.
+Please include:
+
+- steps to reproduce
+- affected files or versions
+- the impact you observed
+
+You will receive an acknowledgement as soon as reasonably possible.
 
 ## Scope
 
-This repository is a **format and pure toolkit**. It has no server, database,
-authentication, or network calls, so the realistic surface is small:
+This repository is a format and pure toolkit.
 
-- **In scope:** a schema or validator flaw that lets an invalid or unsafe pack
-  validate; a rendering/exporter flaw that could inject unintended instructions
-  into an output file; a supply-chain issue in the dev dependencies used by the
-  validation scripts.
-- **Out of scope:** anything about the hosted product at Shelvia.net (report
-  those through Shelvia.net's own channels), and vulnerabilities in third-party
-  AI tools that consume a pack.
+It has no server, database, authentication, billing system, hosted app code, or private Shelvia product logic.
+
+In scope:
+
+- schema or validator issues that let an invalid pack validate
+- rendering/export issues that could inject unintended instructions into an output file
+- supply-chain issues in the dev dependencies used by validation scripts
+
+Out of scope:
+
+- issues related to the hosted product at Shelvia.net
+- vulnerabilities in third-party AI tools that consume a Context Pack
 
 ## Design intent
 
-A Context Pack is meant to carry only **reviewed, human-approved** content, never
-raw chat logs or credentials. The reference package (v0.2) will render packs
-through a secret redactor and an instruction-injection check as defense in depth.
-Until then, do not place secrets in a pack; the format does not need them.
+A Context Pack is meant to carry only reviewed, human-approved project context.
+
+Do not place secrets, credentials, API keys, passwords, tokens, private keys, or raw chat logs in a Context Pack.
 
 ## Supported versions
 
-The project is pre-1.0. Fixes land on the latest `0.x`. Older `0.x` releases are
-not maintained.
+The project is pre-1.0. Fixes land on the latest 0.x version.
+Older 0.x versions are not maintained.

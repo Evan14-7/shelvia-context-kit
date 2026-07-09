@@ -26,7 +26,7 @@ declares the `spec_version` it targets.
   `docs/relationship-to-shelvia.md` (positioning vs the hosted product).
 - Dependency-light checks: `npm run check:json` (zero-dependency JSON parse) and
   `npm run validate:examples` (schema validation via `ajv`).
-- Repository hygiene: `README`, `LICENSE` (MIT suggested), `CONTRIBUTING`,
+- Repository hygiene: `README`, `LICENSE` (MIT), `CONTRIBUTING`,
   `SECURITY`, and this changelog.
 
 [Unreleased]: https://github.com/Evan14-7/shelvia-context-kit/compare/v0.1.0...HEAD

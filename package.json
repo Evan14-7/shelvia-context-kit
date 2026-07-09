@@ -37,6 +37,9 @@
   "bugs": {
     "url": "https://github.com/Evan14-7/shelvia-context-kit/issues"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc",
     "prepare": "npm run build",

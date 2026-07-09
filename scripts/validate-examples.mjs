@@ -1,11 +1,9 @@
 #!/usr/bin/env node
 /**
- * validate-examples.mjs — validate every example pack against the schema.
- *
- * Uses ajv (declared in devDependencies). Run `npm install` first. If ajv is
- * missing it prints a friendly hint instead of a stack trace. ajv-formats is
- * optional: when present, "uri" / "date-time" are checked; when absent they are
- * treated as annotations so the script still runs.
+ * validate-examples.mjs — validate every example pack with the package's own
+ * validateContextPack(), so the examples are checked by the exact code we ship.
+ * Requires a build first (npm run build); `npm run validate:examples` and the
+ * CI workflow build before calling this.
  */
 
 import { readFileSync, readdirSync, statSync } from "node:fs";
@@ -14,25 +12,13 @@ import { dirname, join, relative } from "node:path";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 
-let Ajv;
+let validateContextPack;
 try {
-  ({ default: Ajv } = await import("ajv"));
+  ({ validateContextPack } = await import(new URL("../dist/index.js", import.meta.url)));
 } catch {
-  console.error("Missing dev dependency 'ajv'. Run `npm install`, then retry.");
+  console.error("Build first: run `npm run build`, then retry `npm run validate:examples`.");
   process.exit(1);
 }
-
-let addFormats = null;
-try {
-  ({ default: addFormats } = await import("ajv-formats"));
-} catch {
-  console.log("(ajv-formats not installed — 'uri'/'date-time' treated as annotations)\n");
-}
-
-const schema = JSON.parse(readFileSync(join(ROOT, "schema/context-pack.schema.json"), "utf8"));
-const ajv = new Ajv({ allErrors: true, strict: false });
-if (addFormats) addFormats(ajv);
-const validate = ajv.compile(schema);
 
 function walk(dir, acc = []) {
   let entries;
@@ -60,14 +46,13 @@ let fail = 0;
 for (const f of packs) {
   const rel = relative(ROOT, f);
   const data = JSON.parse(readFileSync(f, "utf8"));
-  if (validate(data)) {
+  const { valid, errors } = validateContextPack(data);
+  if (valid) {
     console.log(`  PASS  ${rel}`);
   } else {
     fail++;
     console.log(`  FAIL  ${rel}`);
-    for (const err of validate.errors ?? []) {
-      console.log(`          ${err.instancePath || "/"} ${err.message}`);
-    }
+    for (const err of errors) console.log(`          ${err.path} ${err.message}`);
   }
 }
 

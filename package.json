@@ -1,17 +1,33 @@
 {
-  "name": "shelvia-context-kit",
-  "version": "0.1.0",
-  "private": true,
-  "description": "An open format and toolkit for Context Packs — portable, reviewed project context for AI tools.",
+  "name": "@shelvia/context-pack",
+  "version": "1.0.0",
+  "description": "Validate, render, and export Context Packs — portable, reviewed project context for AI tools.",
   "license": "MIT",
   "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "bin": {
+    "shelvia-context-pack": "bin/cli.mjs"
+  },
+  "files": [
+    "dist",
+    "schema",
+    "bin"
+  ],
   "keywords": [
     "context-pack",
     "ai",
     "agents",
     "prompt",
     "handoff",
-    "json-schema"
+    "json-schema",
+    "cli"
   ],
   "homepage": "https://github.com/Evan14-7/shelvia-context-kit#readme",
   "repository": {
@@ -22,13 +38,21 @@
     "url": "https://github.com/Evan14-7/shelvia-context-kit/issues"
   },
   "scripts": {
-    "check:json": "node scripts/check-json.mjs",
+    "build": "tsc",
+    "prepare": "npm run build",
+    "pretest": "npm run build",
+    "test": "node --test",
+    "validate": "node scripts/validate-examples.mjs",
     "validate:examples": "node scripts/validate-examples.mjs",
-    "test": "npm run check:json && npm run validate:examples"
+    "check:json": "node scripts/check-json.mjs"
   },
-  "devDependencies": {
+  "dependencies": {
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "typescript": "^5.5.4"
   },
   "engines": {
     "node": ">=18"

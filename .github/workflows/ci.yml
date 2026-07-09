@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  validate:
+  build-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -17,5 +17,9 @@ jobs:
       - run: npm install
       - name: Check JSON is well-formed
         run: npm run check:json
-      - name: Validate examples against the schema
+      - name: Build the package
+        run: npm run build
+      - name: Run tests
+        run: node --test
+      - name: Validate examples with the shipped validator
         run: npm run validate:examples

@@ -1,0 +1,80 @@
+{
+  "spec_version": "0.1",
+  "generated_at": "2026-07-09T09:00:00Z",
+  "category": "coding",
+  "task": "Add per-tenant rate limiting to the public API without breaking existing clients.",
+  "work_phase": "plan",
+  "project_summary": "Relay is a small HTTP API gateway that forwards requests to internal services. It is used by a handful of paying customers and needs fair-use limits before onboarding more.",
+  "current_direction": "Introduce rate limiting that is safe to roll out gradually and observable before it is enforced.",
+  "decisions": [
+    {
+      "title": "Use a token-bucket limiter keyed by tenant",
+      "body": "Each tenant gets a refillable bucket; requests over the limit get a 429 with a Retry-After header.",
+      "rationale": "Token buckets absorb short bursts while still capping sustained load, which fits real client traffic.",
+      "tradeoffs": "Needs shared state across gateway instances, so it depends on the Redis decision below.",
+      "evidence": [
+        {
+          "claim": "429 with Retry-After is the standard signal for rate limiting",
+          "source": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429"
+        }
+      ]
+    },
+    {
+      "title": "Store counters in Redis, not in process memory",
+      "body": "Counters live in Redis so all gateway instances share one view of a tenant's usage.",
+      "rationale": "In-process counters would let a client exceed the limit by spreading requests across instances."
+    },
+    {
+      "title": "Ship in shadow mode first",
+      "body": "Log what would have been limited for two weeks before returning any 429s.",
+      "rationale": "Rolling out enforcement blind risks cutting off a paying customer on a wrong threshold."
+    }
+  ],
+  "sources": [
+    {
+      "label": "MDN — 429 Too Many Requests",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429",
+      "trust_grade": "primary",
+      "bound_claim": "429 with Retry-After is the standard signal for rate limiting"
+    },
+    {
+      "label": "Redis — INCR-based rate limiting pattern",
+      "url": "https://redis.io/docs/latest/develop/use/patterns/",
+      "trust_grade": "reputable"
+    }
+  ],
+  "prompts": [
+    {
+      "text": "Given this Redis client, implement a token-bucket rate limiter with a configurable refill rate and burst size. Return remaining tokens and a retry-after value.",
+      "tool": "Claude Code"
+    }
+  ],
+  "constraints": [
+    "Existing clients must not see behavior change until enforcement is turned on",
+    "Every limited request must be observable in metrics before it is enforced"
+  ],
+  "boundaries": [
+    "Do not change the public request or response schema",
+    "Do not enforce limits in the first release; log only"
+  ],
+  "what_to_avoid": [
+    "In-process counters — they undercount across instances",
+    "A fixed-window counter — it allows double-rate bursts at the window edge"
+  ],
+  "open_questions": [
+    "What is a fair default limit per tenant before customers ask for more?",
+    "Should internal service-to-service calls be exempt from limits?"
+  ],
+  "next_steps": [
+    "Add a shadow-mode limiter that logs would-be 429s with the tenant and threshold",
+    "Add a per-tenant metrics dashboard for request and limit counts"
+  ],
+  "version_history": [
+    { "label": "v1.0", "status": "shipped", "summary": "Plain pass-through gateway, no limits." }
+  ],
+  "definition_of_done": "Shadow mode is live and reporting would-be limits per tenant in metrics, with zero change to client-visible responses.",
+  "recommended_assistant": {
+    "type": "coding",
+    "reason": "The next step is implementing a shadow-mode limiter, so a coding assistant fits."
+  }
+}

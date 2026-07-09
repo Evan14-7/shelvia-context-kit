@@ -1,6 +1,10 @@
 # Dependencies
 node_modules/
 
+# Build output (compiled on install via the prepare script; shipped via "files")
+dist/
+*.tsbuildinfo
+
 # Logs and OS cruft
 *.log
 .DS_Store

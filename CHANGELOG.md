@@ -6,12 +6,30 @@ project aims to follow [Semantic Versioning](https://semver.org/) once it
 reaches 1.0. Until then, `0.x` releases may change the pack shape; each pack
 declares the `spec_version` it targets.
 
-## [Unreleased]
+## [1.0.0] - 2026-07-09
 
-### Planned
-- v0.2 — reference validator + TypeScript types (`@shelvia/context-pack`).
-- v0.3 — CLI (`validate` | `render` | `export`).
-- v0.4 — exporters for Codex / Claude / Cursor / ChatGPT.
+The repo is now a working toolkit, not just a spec. Everything previously listed
+as a v0.2 / v0.3 / v0.4 roadmap item is implemented and tested.
+
+### Added
+- `@shelvia/context-pack` npm package (TypeScript, ESM).
+- TypeScript types for `ContextPack` and its sub-objects (`src/types.ts`).
+- `validateContextPack()` — schema-backed validation with clear, path-anchored
+  errors (`src/validate.ts`).
+- `renderMarkdown()` — the neutral full-pack Markdown renderer (`src/render.ts`).
+- Exporters for ChatGPT, Claude, Cursor, and Codex (`src/exporters/*`), plus an
+  `exportPack(pack, target)` dispatcher.
+- A CLI: `shelvia-context-pack validate | render | export` (`bin/cli.mjs` +
+  `src/cli.ts`), exiting non-zero on validation failure.
+- A test suite on Node's built-in runner (`test/`), and a second worked example
+  (`examples/software-project/context-pack.json`).
+- `docs/exporters.md`.
+- CI now builds, tests, and validates every example against the shipped
+  validator on each push.
+
+### Changed
+- `validate:examples` now uses the package's own `validateContextPack()` (it
+  dogfoods the shipped code path instead of a separate ajv call).
 
 ## [0.1.0] - 2026-07-07
 
@@ -29,5 +47,5 @@ declares the `spec_version` it targets.
 - Repository hygiene: `README`, `LICENSE` (MIT), `CONTRIBUTING`,
   `SECURITY`, and this changelog.
 
-[Unreleased]: https://github.com/Evan14-7/shelvia-context-kit/compare/v0.1.0...HEAD
+[1.0.0]: https://github.com/Evan14-7/shelvia-context-kit/releases/tag/v1.0.0
 [0.1.0]: https://github.com/Evan14-7/shelvia-context-kit/releases/tag/v0.1.0

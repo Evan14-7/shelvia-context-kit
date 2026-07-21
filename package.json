@@ -1,5 +1,5 @@
 {
-  "name": "@shelvia/context-pack",
+  "name": "shelvia-context-pack",
   "version": "1.0.0",
   "description": "Validate, render, and export Context Packs — portable, reviewed project context for AI tools.",
   "license": "MIT",
@@ -36,9 +36,6 @@
   },
   "bugs": {
     "url": "https://github.com/Evan14-7/shelvia-context-kit/issues"
-  },
-  "publishConfig": {
-    "access": "public"
   },
   "scripts": {
     "build": "tsc",

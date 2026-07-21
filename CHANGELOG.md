@@ -12,7 +12,7 @@ The repo is now a working toolkit, not just a spec. Everything previously listed
 as a v0.2 / v0.3 / v0.4 roadmap item is implemented and tested.
 
 ### Added
-- `@shelvia/context-pack` npm package (TypeScript, ESM).
+- `@shelviahq/context-pack` npm package (TypeScript, ESM).
 - TypeScript types for `ContextPack` and its sub-objects (`src/types.ts`).
 - `validateContextPack()` — schema-backed validation with clear, path-anchored
   errors (`src/validate.ts`).

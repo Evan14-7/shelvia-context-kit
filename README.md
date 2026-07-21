@@ -7,7 +7,7 @@ context for AI tools.**
 ![Spec: v0.1](https://img.shields.io/badge/spec-v0.1-informational)
 ![Node: >=18](https://img.shields.io/badge/node-%3E%3D18-informational)
 
-Package: `@shelvia/context-pack` · Format: **Context Packs** · Hosted product:
+Package: `@shelviahq/context-pack` · Format: **Context Packs** · Hosted product:
 [Shelvia.net](https://shelvia.net)
 
 ---
@@ -66,7 +66,7 @@ import {
   validateContextPack,
   renderMarkdown,
   exportPack,
-} from "@shelvia/context-pack";
+} from "@shelviahq/context-pack";
 
 const pack = JSON.parse(fs.readFileSync("my.pack.json", "utf8"));
 
@@ -80,10 +80,10 @@ const agentsMd = exportPack(pack, "codex"); // "chatgpt" | "claude" | "cursor" |
 ### From the command line
 
 ```bash
-npx @shelvia/context-pack validate examples/basic/context-pack.json
-npx @shelvia/context-pack render   examples/basic/context-pack.json
-npx @shelvia/context-pack export   examples/basic/context-pack.json --target cursor
-npx @shelvia/context-pack export   examples/basic/context-pack.json --target codex
+npx @shelviahq/context-pack validate examples/basic/context-pack.json
+npx @shelviahq/context-pack render   examples/basic/context-pack.json
+npx @shelviahq/context-pack export   examples/basic/context-pack.json --target cursor
+npx @shelviahq/context-pack export   examples/basic/context-pack.json --target codex
 ```
 
 `validate` exits `0` when the pack is valid and non-zero (with readable errors)

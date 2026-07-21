@@ -1,4 +1,4 @@
-// Tests for @shelvia/context-pack. Run against the compiled dist/ via
+// Tests for @shelviahq/context-pack. Run against the compiled dist/ via
 // `npm test` (which builds first). Uses Node's built-in test runner.
 
 import { test } from "node:test";

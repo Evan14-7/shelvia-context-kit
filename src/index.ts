@@ -1,5 +1,5 @@
 /**
- * shelvia-context-pack — the public API for the Context Pack format toolkit.
+ * @shelvia/context-pack — the public API for the Context Pack format toolkit.
  *
  * Validate, render, and export a Context Pack. No network, no secrets, no
  * hosted-product logic — a pure toolkit over the open format.

@@ -11,12 +11,12 @@ already reads. Every exporter follows two rules:
 Use them from the library or the CLI:
 
 ```ts
-import { exportPack } from "shelvia-context-pack";
+import { exportPack } from "@shelvia/context-pack";
 const text = exportPack(pack, "codex");
 ```
 
 ```bash
-npx shelvia-context-pack export my.pack.json --target codex
+npx @shelvia/context-pack export my.pack.json --target codex
 ```
 
 ## Targets

@@ -8,18 +8,42 @@ on:
 
 jobs:
   build-test:
-    runs-on: ubuntu-latest
+    name: build & test (${{ matrix.os }} · node ${{ matrix.node }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: [18, 20, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - name: Check JSON is well-formed
+        run: npm run check:json
+      - name: Build the package
+        run: npm run build
+      - name: Run tests (unit + CLI e2e + golden snapshots)
+        run: npm test
+      - name: Validate examples with the shipped validator
+        run: npm run validate:examples
+
+  consumer-smoke:
+    name: consumer install smoke (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm install
-      - name: Check JSON is well-formed
-        run: npm run check:json
-      - name: Build the package
-        run: npm run build
-      - name: Run tests
-        run: node --test
-      - name: Validate examples with the shipped validator
-        run: npm run validate:examples
+          cache: npm
+      - run: npm ci
+      - name: Pack, install the tarball in a throwaway project, import + run the bin
+        run: npm run consumer:smoke

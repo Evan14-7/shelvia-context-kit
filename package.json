@@ -45,6 +45,8 @@
     "prepare": "npm run build",
     "pretest": "npm run build",
     "test": "node --test",
+    "golden:update": "npm run build && node scripts/gen-golden.mjs",
+    "consumer:smoke": "node scripts/consumer-smoke.mjs",
     "validate": "node scripts/validate-examples.mjs",
     "validate:examples": "node scripts/validate-examples.mjs",
     "check:json": "node scripts/check-json.mjs"

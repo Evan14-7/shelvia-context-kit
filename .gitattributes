@@ -1,0 +1,3 @@
+# Golden snapshots are content references — keep them LF on every platform so a
+# Windows checkout doesn't rewrite them to CRLF and produce noisy diffs.
+test/golden/*.md text eol=lf

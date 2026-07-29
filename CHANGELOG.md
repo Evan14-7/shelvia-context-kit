@@ -2,9 +2,10 @@
 
 All notable changes to Shelvia Context Kit are documented here. The format is
 based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the
-project aims to follow [Semantic Versioning](https://semver.org/) once it
-reaches 1.0. Until then, `0.x` releases may change the pack shape; each pack
-declares the `spec_version` it targets.
+package follows [Semantic Versioning](https://semver.org/). Note that the npm
+**package** version and the Context Pack **`spec_version`** track different
+things: the package version tracks the toolkit; `spec_version` (currently `0.1`)
+tracks the portable file format, which each pack declares.
 
 ## [1.0.0] - 2026-07-09
 

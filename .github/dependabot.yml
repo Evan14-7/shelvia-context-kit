@@ -1,0 +1,18 @@
+version: 2
+updates:
+  # Keep the (small) npm dependency tree patched, incl. security fixes.
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+
+  # Keep the CI GitHub Actions patched (and pinnable to fresh SHAs).
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "ci"

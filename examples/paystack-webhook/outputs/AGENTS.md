@@ -1,0 +1,36 @@
+# AGENTS.md
+
+## Project context
+A payments service that receives Paystack webhooks (charge.success, transfer events) and updates order state. The handler already verifies the HMAC signature, but it does not defend against replayed or duplicated deliveries.
+
+## Current task
+Add replay protection to the Paystack webhook handler so a captured event can't be re-submitted.
+
+## Phase
+Implement
+
+## How to work in this repo
+- The HMAC signature check must run first and stay unchanged — do not weaken it.
+- Always respond within Paystack's timeout; return 200 for already-seen events so they stop retrying.
+- Never log the raw signature, secret key, or full request body.
+- Only touch the webhook ingestion path; do not change order-fulfilment business logic.
+- No new third-party dependency without a stated reason.
+
+## Source-backed decisions
+- **Reject events whose timestamp is outside a 5-minute window** — Parse the delivery timestamp and reject anything older than 5 minutes (or in the future), after the signature check passes.
+  - Why: A leaked-but-valid payload should not be replayable indefinitely; a bounded window limits the blast radius.
+  - Tradeoff: Requires reasonably synced clocks; we allow 5 minutes of skew rather than a tighter window to avoid false rejections.
+  - Backed by: Paystack signs each event with HMAC SHA512 using your secret key; verify before trusting the body (https://paystack.com/docs/payments/webhooks/)
+- **Deduplicate on the event id with a persisted seen-set** — Record each processed event id and treat a repeat id as already-handled (return 200 without re-processing).
+  - Why: Signature + timestamp still allow the SAME event to be delivered twice within the window; idempotency must key on the event id.
+  - Tradeoff: Adds a small store and a TTL to prune old ids; acceptable for correctness.
+
+## Tests and validation
+A replayed or duplicated delivery is safely ignored (200, no double-processing), an out-of-window event is rejected, the signature check is unchanged, and tests cover the four cases.
+
+## Things not to change
+- Trusting the event body before the signature is verified.
+- Keying idempotency on the reference alone — use the delivered event id.
+
+## When uncertain
+Ask for clarification rather than changing unrelated areas.

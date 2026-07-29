@@ -1,0 +1,69 @@
+{
+  "spec_version": "0.1",
+  "generated_at": "2026-07-29T09:00:00Z",
+  "category": "coding",
+  "task": "Add replay protection to the Paystack webhook handler so a captured event can't be re-submitted.",
+  "work_phase": "implement",
+  "project_summary": "A payments service that receives Paystack webhooks (charge.success, transfer events) and updates order state. The handler already verifies the HMAC signature, but it does not defend against replayed or duplicated deliveries.",
+  "current_direction": "Harden the existing verified handler against replay and duplicate delivery before enabling automatic order fulfilment.",
+  "decisions": [
+    {
+      "title": "Reject events whose timestamp is outside a 5-minute window",
+      "body": "Parse the delivery timestamp and reject anything older than 5 minutes (or in the future), after the signature check passes.",
+      "rationale": "A leaked-but-valid payload should not be replayable indefinitely; a bounded window limits the blast radius.",
+      "tradeoffs": "Requires reasonably synced clocks; we allow 5 minutes of skew rather than a tighter window to avoid false rejections.",
+      "evidence": [
+        {
+          "claim": "Paystack signs each event with HMAC SHA512 using your secret key; verify before trusting the body",
+          "source": "https://paystack.com/docs/payments/webhooks/"
+        }
+      ]
+    },
+    {
+      "title": "Deduplicate on the event id with a persisted seen-set",
+      "body": "Record each processed event id and treat a repeat id as already-handled (return 200 without re-processing).",
+      "rationale": "Signature + timestamp still allow the SAME event to be delivered twice within the window; idempotency must key on the event id.",
+      "tradeoffs": "Adds a small store and a TTL to prune old ids; acceptable for correctness."
+    }
+  ],
+  "sources": [
+    {
+      "label": "Paystack — Verifying webhooks",
+      "url": "https://paystack.com/docs/payments/webhooks/",
+      "trust_grade": "primary",
+      "bound_claim": "Paystack signs each event with HMAC SHA512 using your secret key; verify before trusting the body"
+    },
+    {
+      "label": "OWASP — Replay attack",
+      "url": "https://owasp.org/www-community/attacks/Replay_attack",
+      "trust_grade": "reputable"
+    }
+  ],
+  "constraints": [
+    "The HMAC signature check must run first and stay unchanged — do not weaken it.",
+    "Always respond within Paystack's timeout; return 200 for already-seen events so they stop retrying.",
+    "Never log the raw signature, secret key, or full request body."
+  ],
+  "boundaries": [
+    "Only touch the webhook ingestion path; do not change order-fulfilment business logic.",
+    "No new third-party dependency without a stated reason."
+  ],
+  "what_to_avoid": [
+    "Trusting the event body before the signature is verified.",
+    "Keying idempotency on the reference alone — use the delivered event id."
+  ],
+  "open_questions": [
+    "Which persistent store holds the seen-set — the existing Postgres, or Redis with a TTL?",
+    "What clock-skew window is acceptable to operations?"
+  ],
+  "next_steps": [
+    "Add timestamp-window rejection after the existing signature check.",
+    "Add event-id dedupe backed by a persisted seen-set with a TTL.",
+    "Add tests: valid new event, replayed event, expired timestamp, tampered signature."
+  ],
+  "definition_of_done": "A replayed or duplicated delivery is safely ignored (200, no double-processing), an out-of-window event is rejected, the signature check is unchanged, and tests cover the four cases.",
+  "recommended_assistant": {
+    "type": "coding",
+    "reason": "This is a bounded implementation task in an existing repo with clear tests to write."
+  }
+}

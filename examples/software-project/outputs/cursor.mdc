@@ -1,0 +1,37 @@
+---
+description: Reviewed project context
+alwaysApply: false
+---
+
+# Project context
+
+## Current task
+Add per-tenant rate limiting to the public API without breaking existing clients.
+
+## Phase
+Plan
+
+## Rules
+- Existing clients must not see behavior change until enforcement is turned on
+- Every limited request must be observable in metrics before it is enforced
+
+## Boundaries
+- Do not change the public request or response schema
+- Do not enforce limits in the first release; log only
+
+## Decisions
+- **Use a token-bucket limiter keyed by tenant** — Each tenant gets a refillable bucket; requests over the limit get a 429 with a Retry-After header.
+  - Why: Token buckets absorb short bursts while still capping sustained load, which fits real client traffic.
+  - Tradeoff: Needs shared state across gateway instances, so it depends on the Redis decision below.
+  - Backed by: 429 with Retry-After is the standard signal for rate limiting (https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429)
+- **Store counters in Redis, not in process memory** — Counters live in Redis so all gateway instances share one view of a tenant's usage.
+  - Why: In-process counters would let a client exceed the limit by spreading requests across instances.
+- **Ship in shadow mode first** — Log what would have been limited for two weeks before returning any 429s.
+  - Why: Rolling out enforcement blind risks cutting off a paying customer on a wrong threshold.
+
+## Avoid
+- In-process counters — they undercount across instances
+- A fixed-window counter — it allows double-rate bursts at the window edge
+
+## Definition of done
+Shadow mode is live and reporting would-be limits per tenant in metrics, with zero change to client-visible responses.

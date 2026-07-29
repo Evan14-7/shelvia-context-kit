@@ -1,0 +1,62 @@
+{
+  "spec_version": "0.1",
+  "generated_at": "2026-07-29T09:30:00Z",
+  "category": "general",
+  "task": "Continue implementing the rate-limiter: ChatGPT planned it, this pack hands the reviewed plan to Claude Code to build, and Codex will review the result.",
+  "work_phase": "implement",
+  "project_summary": "An API needs a per-API-key rate limiter (100 requests/minute, sliding window). One tool planned the approach, a human reviewed it, and the reviewed plan is now being handed to the next tool to implement — then to a third for review.",
+  "current_direction": "The plan is approved. Claude Code implements against these constraints; Codex then reviews the diff against the same definition of done.",
+  "decisions": [
+    {
+      "title": "Sliding-window counter in Redis, keyed by API key",
+      "body": "Use a Redis sorted set per key with request timestamps; count entries in the trailing 60s window.",
+      "rationale": "Chosen during planning as the balance of accuracy and cost; a human approved it before this handoff.",
+      "tradeoffs": "Slightly more memory than a fixed-window counter, but avoids the burst-at-the-boundary problem.",
+      "outcome": "Approved in review — this is the plan Claude Code should implement, not reopen."
+    }
+  ],
+  "sources": [
+    {
+      "label": "MDN — HTTP 429 Too Many Requests",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429",
+      "trust_grade": "primary",
+      "bound_claim": "A rate-limited response should use 429 and a Retry-After header"
+    }
+  ],
+  "prompts": [
+    {
+      "text": "Implement the approved sliding-window rate limiter exactly as specified in the decisions and constraints. Do not redesign the approach. Return the diff plus the tests you added.",
+      "tool": "implementation assistant"
+    }
+  ],
+  "constraints": [
+    "Implement the approved sliding-window design — do not switch to a different algorithm.",
+    "Return HTTP 429 with a Retry-After header when the limit is exceeded.",
+    "The limiter must fail open (allow the request) if Redis is unreachable, and log that it did."
+  ],
+  "boundaries": [
+    "Handoff record — what each tool did, reviewed, and passes on:",
+    "Planning tool produced: the sliding-window design + the 100/min figure.",
+    "Human reviewed and approved: the algorithm and the fail-open rule.",
+    "This pack carries forward: the approved decision, constraints, and definition of done.",
+    "The next tool (implementation) receives: this pack only — not the raw planning chat.",
+    "The next tool must return: the diff + tests, for the review tool to check."
+  ],
+  "what_to_avoid": [
+    "Re-litigating the algorithm choice that was already reviewed and approved.",
+    "Silently failing closed (blocking all traffic) when Redis is down."
+  ],
+  "open_questions": [
+    "Should the limit be configurable per key tier, or a single global 100/min for v1?"
+  ],
+  "next_steps": [
+    "Implementation tool: build the limiter + middleware and add tests for under-limit, at-limit, over-limit, and Redis-down.",
+    "Review tool: check the diff against the decision, constraints, and definition of done; flag any deviation.",
+    "Human: approve the reviewed result before it merges."
+  ],
+  "definition_of_done": "The middleware enforces 100 req/min per key with a sliding window, returns 429 + Retry-After over the limit, fails open with a log when Redis is down, and has tests for all four cases — matching the approved plan without redesigning it.",
+  "recommended_assistant": {
+    "type": "coding",
+    "reason": "The plan is approved and reviewed; the next step is a bounded implementation for a coding tool, then a review pass."
+  }
+}

@@ -41,5 +41,8 @@ Do not place secrets, credentials, API keys, passwords, tokens, private keys, or
 
 ## Supported versions
 
-The project is pre-1.0. Fixes land on the latest 0.x version.
-Older 0.x versions are not maintained.
+Two version numbers track different things: the **npm package** (`@shelviahq/context-pack`,
+currently `1.0.0`) tracks the toolkit implementation, while the **Context Pack format**
+(`spec_version`, currently `0.1`) tracks the portable file format.
+
+Security fixes land on the latest `1.0.x` release. Older releases are not maintained.

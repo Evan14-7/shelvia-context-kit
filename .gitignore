@@ -13,3 +13,24 @@ Thumbs.db
 # Editor
 .vscode/
 .idea/
+
+# Secrets and local configuration (never commit these)
+.env
+.env.*
+!.env.example
+.npmrc
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Local agent / tool state (keep intentional public rules; ignore local state only)
+.claude/settings.local.json
+.cursor/mcp.json
+.mcp.json
+
+# Packaging / test output
+coverage/
+*.tgz
+.tmp/
+temp/

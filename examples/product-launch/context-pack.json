@@ -1,0 +1,58 @@
+{
+  "spec_version": "0.1",
+  "generated_at": "2026-07-29T10:10:00Z",
+  "category": "writing",
+  "task": "Prepare the v1 public-launch positioning and the next steps to ship it, using only claims that are true today.",
+  "work_phase": "plan",
+  "project_summary": "A small team is launching a developer tool. Early users bounce off a feature-list homepage; the team needs one sharp promise and an honest launch that doesn't overclaim.",
+  "current_direction": "Lead the launch with a single promise and prove it with one 30-second example; defer everything not shippable today.",
+  "decisions": [
+    {
+      "title": "Lead with one promise, not a feature list",
+      "body": "The hero states a single outcome the product delivers today; features live below the fold.",
+      "rationale": "In user interviews, first-time visitors skimmed feature lists and left without understanding the core value.",
+      "tradeoffs": "Some real capabilities won't be front-and-centre at launch; accepted for a clearer first impression.",
+      "outcome": "Approved as the launch direction.",
+      "evidence": [
+        {
+          "claim": "First-time visitors understood the product faster when shown one outcome instead of a feature list",
+          "source": null
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "label": "Positioning: make your product easy to understand (April Dunford)",
+      "url": "https://www.aprildunford.com/post/positioning",
+      "trust_grade": "reputable"
+    }
+  ],
+  "constraints": [
+    "Every public claim must be true today — no vaporware or unreleased capabilities.",
+    "One promise in the hero, not a feature list.",
+    "Do not overstate what the hosted platform does versus the open-source piece."
+  ],
+  "boundaries": [
+    "Draft launch copy + the plan only; do not publish the site or post anything.",
+    "Use only real, confirmed product capabilities."
+  ],
+  "what_to_avoid": [
+    "A feature-dump homepage.",
+    "Claiming roadmap items as if they already ship."
+  ],
+  "open_questions": [
+    "Which of the two candidate taglines converts better in a quick test?",
+    "Is pricing ready for launch, or should v1 be waitlist-only?"
+  ],
+  "next_steps": [
+    "Write the hero promise + one 30-second example.",
+    "List the true, shippable-today capabilities for the section below the fold.",
+    "Decide waitlist vs. open signup based on pricing readiness."
+  ],
+  "definition_of_done": "A launch page whose hero is a single true promise backed by one concrete example, with no claim that isn't shippable today, and a clear go/no-go on waitlist vs. open signup.",
+  "recommended_assistant": {
+    "type": "writing",
+    "reason": "This is positioning and launch-copy drafting under hard truthfulness constraints."
+  }
+}

@@ -1,0 +1,36 @@
+---
+description: Reviewed project context
+alwaysApply: false
+---
+
+# Project context
+
+## Current task
+Brief the team on the approved branching-strategy decision, why it was chosen, and what it replaced.
+
+## Phase
+Plan
+
+## Rules
+- main must always be releasable (green CI).
+- No branch may live longer than two days.
+
+## Boundaries
+- This pack states the decision + rationale; it does not migrate any repository.
+
+## Decisions
+- **Adopt trunk-based development with short-lived branches** — Everyone integrates to main daily behind feature flags; branches live at most 2 days.
+  - Why: Long-lived develop/release branches caused painful merges and slow, batched releases.
+  - Tradeoff: Requires disciplined feature flagging and a green main at all times; accepted for faster, safer releases.
+  - Outcome: Approved by the team lead after a two-week trial across two squads.
+  - Backed by: Small, frequent merges reduce integration risk and speed up delivery (https://trunkbaseddevelopment.com/)
+- **Gate unfinished work behind feature flags, not branches** — Incomplete features ship dark behind a flag rather than living on a branch.
+  - Why: Keeps main releasable while work is in progress.
+  - Outcome: Approved alongside the trunk-based decision.
+
+## Avoid
+- Re-introducing long-lived develop/release branches — that is the GitFlow approach the team retired.
+- Merging red builds to main.
+
+## Definition of done
+Every engineer (and any AI tool briefed with this pack) integrates to a releasable main daily behind feature flags, with no branch older than two days.

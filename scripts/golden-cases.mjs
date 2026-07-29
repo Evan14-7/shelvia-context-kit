@@ -21,6 +21,8 @@ export const GOLDEN_EXAMPLES = [
   "research-decision",
   "grant-application",
   "cross-ai-handoff",
+  "team-decision",
+  "product-launch",
 ];
 
 /** Exporter target -> output filename, matching each tool's real convention. */

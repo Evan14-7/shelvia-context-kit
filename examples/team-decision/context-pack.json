@@ -1,0 +1,68 @@
+{
+  "spec_version": "0.1",
+  "generated_at": "2026-07-29T10:00:00Z",
+  "category": "general",
+  "task": "Brief the team on the approved branching-strategy decision, why it was chosen, and what it replaced.",
+  "work_phase": "plan",
+  "project_summary": "A six-person engineering team is standardising how it ships. After two weeks of friction with long-lived branches, it has agreed on a new workflow and needs everyone (and any AI tool helping) to follow the same rules.",
+  "current_direction": "Move to trunk-based development with short-lived branches and feature flags; the previous GitFlow approach is retired.",
+  "decisions": [
+    {
+      "title": "Adopt trunk-based development with short-lived branches",
+      "body": "Everyone integrates to main daily behind feature flags; branches live at most 2 days.",
+      "rationale": "Long-lived develop/release branches caused painful merges and slow, batched releases.",
+      "tradeoffs": "Requires disciplined feature flagging and a green main at all times; accepted for faster, safer releases.",
+      "outcome": "Approved by the team lead after a two-week trial across two squads.",
+      "evidence": [
+        {
+          "claim": "Small, frequent merges reduce integration risk and speed up delivery",
+          "source": "https://trunkbaseddevelopment.com/"
+        }
+      ]
+    },
+    {
+      "title": "Gate unfinished work behind feature flags, not branches",
+      "body": "Incomplete features ship dark behind a flag rather than living on a branch.",
+      "rationale": "Keeps main releasable while work is in progress.",
+      "outcome": "Approved alongside the trunk-based decision."
+    }
+  ],
+  "sources": [
+    {
+      "label": "Trunk Based Development",
+      "url": "https://trunkbaseddevelopment.com/",
+      "trust_grade": "reputable",
+      "bound_claim": "Small, frequent merges reduce integration risk and speed up delivery"
+    }
+  ],
+  "constraints": [
+    "main must always be releasable (green CI).",
+    "No branch may live longer than two days."
+  ],
+  "boundaries": [
+    "This pack states the decision + rationale; it does not migrate any repository."
+  ],
+  "what_to_avoid": [
+    "Re-introducing long-lived develop/release branches — that is the GitFlow approach the team retired.",
+    "Merging red builds to main."
+  ],
+  "open_questions": [
+    "What is the feature-flag cleanup policy so flags don't accumulate?"
+  ],
+  "next_steps": [
+    "Document the branching rules in the repo's CONTRIBUTING guide.",
+    "Add a flag-cleanup checklist to the definition of done for flagged work."
+  ],
+  "version_history": [
+    {
+      "label": "GitFlow",
+      "status": "superseded",
+      "summary": "Long-lived develop/release branches; retired after the two-week trunk-based trial."
+    }
+  ],
+  "definition_of_done": "Every engineer (and any AI tool briefed with this pack) integrates to a releasable main daily behind feature flags, with no branch older than two days.",
+  "recommended_assistant": {
+    "type": "planning",
+    "reason": "This communicates and plans a team process decision; it is not a coding or research task."
+  }
+}

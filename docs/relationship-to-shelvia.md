@@ -22,7 +22,7 @@ way.
 | The Context Pack schema and types | Uses it | **Defines it** |
 | Render a pack to Markdown / CLAUDE.md / AGENTS.md / Cursor | Uses it | **Provides it** |
 | Validate a pack | Uses it | **Provides it** |
-| Redact secrets before a pack leaves | Uses it | **Provides it** |
+| Redact secrets before a pack leaves | Yes | No — the README warns; the kit never inspects or alters your pack |
 
 In one line: the open project is the **output format plus deterministic
 renderers and a validator**. The hosted product is **how a pack gets filled with

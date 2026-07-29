@@ -1,0 +1,64 @@
+{
+  "spec_version": "0.1",
+  "generated_at": "2026-07-29T09:20:00Z",
+  "category": "writing",
+  "task": "Draft an AI-research grant application using only verified facts — leave any unknown field blank rather than inventing it.",
+  "work_phase": "plan",
+  "project_summary": "A small research group is applying for an AI-safety research grant. The application needs a project summary, methodology, budget justification, and team bios, within strict word limits and using only facts the group has confirmed.",
+  "current_direction": "Assemble a first full draft from confirmed facts, clearly marking every field that still needs a real answer from the applicants.",
+  "decisions": [
+    {
+      "title": "Never invent applicant facts",
+      "body": "Any figure, affiliation, date, or credential that isn't in the verified facts must be left as an explicit blank for the applicants to fill.",
+      "rationale": "A grant application is a factual, accountable document; a fabricated detail can void it and damage trust.",
+      "tradeoffs": "The first draft will have visible gaps, which is correct — gaps are honest, invented facts are not."
+    },
+    {
+      "title": "Respect the funder's word limits per section",
+      "body": "Summary <= 200 words; methodology <= 500 words; each bio <= 100 words.",
+      "rationale": "Over-limit sections are commonly rejected unread.",
+      "evidence": [
+        {
+          "claim": "Funders routinely enforce per-section word limits and reject over-limit submissions",
+          "source": "https://www.grants.gov/learn-grants/grant-writing"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "label": "Grants.gov — Grant writing guidance",
+      "url": "https://www.grants.gov/learn-grants/grant-writing",
+      "trust_grade": "reputable",
+      "bound_claim": "Funders routinely enforce per-section word limits"
+    }
+  ],
+  "constraints": [
+    "Use only the verified facts listed; mark everything else as [NEEDS APPLICANT INPUT].",
+    "Do not exceed any section's word limit.",
+    "Do not claim results, partnerships, or funding that are not in the verified facts."
+  ],
+  "boundaries": [
+    "Draft prose only; do not submit anything or fill the funder's portal.",
+    "Do not add applicant personal data beyond what is provided."
+  ],
+  "what_to_avoid": [
+    "Inventing plausible-sounding metrics, affiliations, or prior awards.",
+    "Padding a section to hit a word count with filler."
+  ],
+  "open_questions": [
+    "What is the confirmed total budget figure and its breakdown?",
+    "Which team members have consented to be named, and with what titles?",
+    "Is there a confirmed institutional partner, or should that stay blank?"
+  ],
+  "next_steps": [
+    "Draft the project summary from the confirmed problem statement.",
+    "Draft the methodology, marking any unconfirmed step as [NEEDS APPLICANT INPUT].",
+    "List each required field the applicants must still supply before submission."
+  ],
+  "definition_of_done": "A complete draft within every word limit, where each fact traces to the verified list and every unknown is an explicit, labelled blank — not an invention.",
+  "recommended_assistant": {
+    "type": "writing",
+    "reason": "This is structured, constraint-bound prose drafting, not coding or open research."
+  }
+}

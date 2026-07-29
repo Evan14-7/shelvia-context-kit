@@ -24,9 +24,16 @@ npx @shelviahq/context-pack export my.pack.json --target codex
 | Target | Produces | Typical destination |
 |---|---|---|
 | `chatgpt` | A paste-ready project brief in Markdown | A ChatGPT thread or a Project's custom instructions |
-| `claude` | A `CLAUDE.md`-style context file | Claude / Claude Code |
+| `claude` | A `CLAUDE.md`-style context file | Claude Code — a repo's `CLAUDE.md` / persistent project instructions |
 | `cursor` | A Cursor rule with `---` frontmatter | `.cursor/rules/*.mdc` |
 | `codex` | An `AGENTS.md`-style file | OpenAI Codex and other AGENTS.md readers |
+
+> **Claude: chat vs. `CLAUDE.md`.** These are different contexts. The `claude`
+> target produces a **`CLAUDE.md`-style file** — persistent project instructions,
+> best suited to Claude Code or a repo. For a one-off **paste into a Claude chat**,
+> the neutral `renderMarkdown` (or the `chatgpt` target) reads more naturally.
+> Finer targets (e.g. `claude-chat` vs. `claude-code`) may arrive later without
+> changing today's `claude` output.
 
 ## What they include
 

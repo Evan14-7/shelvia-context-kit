@@ -1,0 +1,35 @@
+---
+description: Reviewed project context
+alwaysApply: false
+---
+
+# Project context
+
+## Current task
+Recommend Supabase or Firebase as the backend for a small team's MVP, with the reasoning and sources carried along.
+
+## Phase
+Research
+
+## Rules
+- The recommendation must be backed by a cited source, not preference alone.
+- Relational modelling and a migration exit path are hard requirements.
+
+## Boundaries
+- Compare only Supabase and Firebase; do not introduce a third option unless a requirement can't be met.
+- Do not state pricing figures without linking the current pricing page.
+
+## Decisions
+- **Adopt Supabase for the MVP** — Use Supabase (managed Postgres + auth + storage + realtime) as the backend.
+  - Why: The team wants relational modelling and an exit path; Supabase is Postgres, so the data and much of the logic stay portable.
+  - Tradeoff: Firebase's realtime + offline story is more mature; we accept that for the portability and SQL benefits.
+  - Outcome: Recorded as the approved direction pending the load assumptions in open questions.
+  - Backed by: Supabase is built on Postgres, so schemas and SQL are portable to any Postgres host (https://supabase.com/docs/guides/database/overview)
+  - Backed by: Firebase's Firestore is a document database with strong client SDKs and offline persistence (https://firebase.google.com/docs/firestore)
+
+## Avoid
+- Presenting vendor marketing claims as verified facts.
+- Recommending a NoSQL document model when the team asked for relational.
+
+## Definition of done
+A cited recommendation that names the winner, states the key trade-off accepted, links every factual claim to a source, and lists what remains uncertain.

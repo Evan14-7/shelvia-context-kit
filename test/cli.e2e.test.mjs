@@ -60,6 +60,20 @@ test("export: a missing --target exits 1", () => {
   assert.equal(code, 1);
 });
 
+// 1.0.1 — option order must not matter: --target before the file must NOT
+// treat the target value as the filename.
+test("export: --target before the file resolves the file correctly", () => {
+  const { code, stdout } = cli(["export", "--target", "codex", BASIC]);
+  assert.equal(code, 0, "target-before-file should still find the file");
+  assert.ok(stdout.startsWith("# AGENTS.md"), "should be the codex export, not a file error");
+});
+
+test("export: --target=codex form works", () => {
+  const { code, stdout } = cli(["export", BASIC, "--target=codex"]);
+  assert.equal(code, 0);
+  assert.ok(stdout.startsWith("# AGENTS.md"));
+});
+
 test("--help exits 0 and prints usage", () => {
   const { code, stdout } = cli(["--help"]);
   assert.equal(code, 0);

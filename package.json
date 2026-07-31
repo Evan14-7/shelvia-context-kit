@@ -1,6 +1,6 @@
 {
   "name": "@shelviahq/context-pack",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Validate, render, and export Context Packs — portable, reviewed project context for AI tools.",
   "license": "MIT",
   "type": "module",

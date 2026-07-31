@@ -35,6 +35,7 @@ export { exportCursor } from "./exporters/cursor.js";
 export { exportCodex } from "./exporters/codex.js";
 
 import type { ContextPack, ExportTarget } from "./types.js";
+import { assertContextPack } from "./validate.js";
 import { exportChatGPT } from "./exporters/chatgpt.js";
 import { exportClaude } from "./exporters/claude.js";
 import { exportCursor } from "./exporters/cursor.js";
@@ -59,4 +60,15 @@ export function exportPack(pack: ContextPack, target: ExportTarget): string {
       throw new Error(`Unknown export target: ${String(bad)}`);
     }
   }
+}
+
+/**
+ * Validate THEN export in one call — the safe entry point for JS callers, who
+ * (unlike the CLI) would otherwise bypass validation. Throws a readable error if
+ * the input is not a valid Context Pack; returns the exported string otherwise.
+ * Use exportPack directly only when you've already validated the input.
+ */
+export function validateAndExportPack(input: unknown, target: ExportTarget): string {
+  const pack = assertContextPack(input);
+  return exportPack(pack, target);
 }

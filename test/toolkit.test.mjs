@@ -6,6 +6,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import {
   validateContextPack,
+  validateAndExportPack,
   renderMarkdown,
   exportPack,
   EXPORT_TARGETS,
@@ -70,4 +71,38 @@ test("exporters do not invent facts (project summary is carried verbatim)", () =
 
 test("exportPack throws on an unknown target", () => {
   assert.throws(() => exportPack(basic, "notatool"));
+});
+
+// --- 1.0.1 hardening ---
+
+test("spec_version is enforced — an unknown version is rejected", () => {
+  assert.equal(validateContextPack({ ...basic, spec_version: "9.9" }).valid, false);
+  assert.equal(validateContextPack({ ...basic, spec_version: "banana" }).valid, false);
+  assert.equal(validateContextPack({ ...basic, spec_version: "0.1" }).valid, true);
+});
+
+test("required text rejects empty strings (minLength)", () => {
+  const bad = {
+    ...basic,
+    version_history: [{ label: "", status: "" }],
+  };
+  assert.equal(validateContextPack(bad).valid, false);
+});
+
+test("hostile source label/URL can't break out of the Markdown link", () => {
+  const pack = {
+    ...basic,
+    sources: [
+      { label: "evil] (injected)(x", url: "https://example.com/a b(c)", trust_grade: "reputable" },
+    ],
+  };
+  const md = renderMarkdown(pack);
+  // The label's ] is escaped, and the space/paren URL is wrapped in <> — so the
+  // link destination is a single angle-bracketed token, not terminated early.
+  assert.ok(md.includes("[evil\\] (injected)(x](<https://example.com/a b(c)>)"), md);
+});
+
+test("validateAndExportPack: exports a valid pack, throws on an invalid one", () => {
+  assert.ok(validateAndExportPack(basic, "claude").length > 0);
+  assert.throws(() => validateAndExportPack({ spec_version: "0.1" }, "claude"));
 });

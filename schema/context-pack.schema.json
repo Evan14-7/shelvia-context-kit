@@ -9,7 +9,8 @@
   "properties": {
     "spec_version": {
       "type": "string",
-      "description": "The Context Pack format version this document targets.",
+      "const": "0.1",
+      "description": "The Context Pack format version this document targets. Only \"0.1\" is supported today; unknown versions are rejected rather than silently accepted.",
       "examples": ["0.1"]
     },
     "generated_at": {
@@ -100,7 +101,7 @@
           "type": "string",
           "enum": ["coding", "research", "writing", "design", "planning", "debugging", "general"]
         },
-        "reason": { "type": "string" }
+        "reason": { "type": "string", "minLength": 1 }
       }
     }
   },
@@ -123,7 +124,7 @@
             "additionalProperties": false,
             "required": ["claim"],
             "properties": {
-              "claim": { "type": "string" },
+              "claim": { "type": "string", "minLength": 1 },
               "source": { "type": ["string", "null"] }
             }
           }
@@ -161,8 +162,8 @@
       "additionalProperties": false,
       "required": ["label", "status"],
       "properties": {
-        "label": { "type": "string" },
-        "status": { "type": "string" },
+        "label": { "type": "string", "minLength": 1 },
+        "status": { "type": "string", "minLength": 1 },
         "summary": { "type": ["string", "null"] }
       }
     }

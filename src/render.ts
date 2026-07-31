@@ -33,11 +33,26 @@ export function decisionLines(decisions: Decision[] | undefined): string[] {
   return out;
 }
 
+/** Escape a value used as inline Markdown (e.g. a link label): strip newlines
+ *  and backslash-escape structural chars so a hostile label can't break out of
+ *  the link. A no-op on clean text. Not a claim of prompt-injection prevention. */
+export function mdInline(s: string): string {
+  return String(s).replace(/\r?\n/g, " ").replace(/([\\[\]])/g, "\\$1");
+}
+
+/** Make a URL safe as a Markdown link destination: drop newlines, and only when
+ *  it contains whitespace / parens / angle brackets, wrap it in <> (CommonMark)
+ *  so it can't terminate the link early. Clean URLs are emitted unchanged. */
+export function mdUrl(u: string): string {
+  const s = String(u).replace(/\r?\n/g, "");
+  return /[\s()<>]/.test(s) ? `<${s.replace(/[<>]/g, "")}>` : s;
+}
+
 export function sourceLines(sources: Source[] | undefined): string[] {
   const out: string[] = [];
   for (const s of sources ?? []) {
     const grade = s.trust_grade ? ` — _${s.trust_grade}_` : "";
-    out.push(s.url ? `- [${s.label}](${s.url})${grade}` : `- ${s.label}${grade}`);
+    out.push(s.url ? `- [${mdInline(s.label)}](${mdUrl(s.url)})${grade}` : `- ${mdInline(s.label)}${grade}`);
     if (s.bound_claim) out.push(`  - Backs: ${s.bound_claim}`);
   }
   return out;

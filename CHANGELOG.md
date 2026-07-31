@@ -7,6 +7,18 @@ package follows [Semantic Versioning](https://semver.org/). Note that the npm
 things: the package version tracks the toolkit; `spec_version` (currently `0.1`)
 tracks the portable file format, which each pack declares.
 
+## [1.0.1] - 2026-07-29
+
+### Fixed
+- `spec_version` is now enforced (`const "0.1"`) — unknown versions are rejected instead of silently validating.
+- CLI: `export --target <t> <file>` no longer mistakes the target value for the filename; the file and `--target` are parsed independently (and `--target=<t>` is accepted).
+- CLI wrapper sets `process.exitCode` instead of calling `process.exit()`, so a large render/export is fully flushed and never truncated.
+- Markdown link labels and destinations are now escaped so a hostile source label/URL can't break out of the link (no-op on clean input).
+
+### Added
+- `validateAndExportPack(input, target)` — validate then export in one call, the safe entry point for JS callers (throws a readable error on invalid input).
+- Schema `minLength` on required text (evidence claim, recommendation reason, version label/status) so structurally valid but empty content is rejected.
+
 ## [1.0.0] - 2026-07-09
 
 The repo is now a working toolkit, not just a spec. Everything previously listed
@@ -48,5 +60,6 @@ as a v0.2 / v0.3 / v0.4 roadmap item is implemented and tested.
 - Repository hygiene: `README`, `LICENSE` (MIT), `CONTRIBUTING`,
   `SECURITY`, and this changelog.
 
+[1.0.1]: https://github.com/Evan14-7/shelvia-context-kit/releases/tag/v1.0.1
 [1.0.0]: https://github.com/Evan14-7/shelvia-context-kit/releases/tag/v1.0.0
 [0.1.0]: https://github.com/Evan14-7/shelvia-context-kit/releases/tag/v0.1.0

@@ -53,6 +53,32 @@ function readPack(file: string): { pack?: ContextPack; errorCode?: number } {
   return { pack: parsed as ContextPack };
 }
 
+/**
+ * Parse the file (first positional) and --target independently, so option order
+ * never matters: `export --target codex pack.json` and `export pack.json
+ * --target codex` both resolve pack.json as the file (the old first-non-dash
+ * heuristic grabbed "codex").
+ */
+function parseArgs(rest: string[]): { file?: string; target?: string } {
+  let target: string | undefined;
+  const positionals: string[] = [];
+  for (let i = 0; i < rest.length; i++) {
+    const a = rest[i]!;
+    if (a === "--target") {
+      target = rest[i + 1];
+      i++;
+      continue;
+    }
+    if (a.startsWith("--target=")) {
+      target = a.slice("--target=".length);
+      continue;
+    }
+    if (a.startsWith("-")) continue; // ignore other flags
+    positionals.push(a);
+  }
+  return { file: positionals[0], target };
+}
+
 export async function run(argv: string[]): Promise<number> {
   const [command, ...rest] = argv;
 
@@ -61,7 +87,7 @@ export async function run(argv: string[]): Promise<number> {
     return command ? 0 : 1;
   }
 
-  const file = rest.find((a) => !a.startsWith("-"));
+  const { file, target } = parseArgs(rest);
 
   if (command === "validate") {
     if (!file) {
@@ -90,8 +116,6 @@ export async function run(argv: string[]): Promise<number> {
       err("Usage: shelvia-context-pack export <file> --target <chatgpt|claude|cursor|codex>");
       return 1;
     }
-    const ti = rest.indexOf("--target");
-    const target = ti >= 0 ? rest[ti + 1] : undefined;
     if (!target || !EXPORT_TARGETS.includes(target as ExportTarget)) {
       err(`--target must be one of: ${EXPORT_TARGETS.join(", ")}`);
       return 1;

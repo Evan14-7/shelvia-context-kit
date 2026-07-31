@@ -4,9 +4,10 @@
  */
 
 import type { ContextPack } from "../types.js";
-import { section, decisionLines, sourceLines, bulletLines, capitalize } from "../render.js";
+import { section, decisionLines, sourceLines, bulletLines, capitalize, sanitizePack } from "../render.js";
 
-export function exportClaude(pack: ContextPack): string {
+export function exportClaude(raw: ContextPack): string {
+  const pack = sanitizePack(raw);
   const lines: string[] = ["# Project context", "", "Generated from a reviewed Context Pack."];
   lines.push(...section("Current objective", [pack.task ?? "(none set)"]));
   if (pack.work_phase) lines.push(...section("Phase", [capitalize(pack.work_phase)]));

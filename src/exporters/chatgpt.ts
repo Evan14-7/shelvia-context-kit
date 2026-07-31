@@ -5,9 +5,10 @@
  */
 
 import type { ContextPack } from "../types.js";
-import { section, decisionLines, sourceLines, bulletLines } from "../render.js";
+import { section, decisionLines, sourceLines, bulletLines, sanitizePack } from "../render.js";
 
-export function exportChatGPT(pack: ContextPack): string {
+export function exportChatGPT(raw: ContextPack): string {
+  const pack = sanitizePack(raw);
   const lines: string[] = ["# Project context for ChatGPT"];
   lines.push(
     "",

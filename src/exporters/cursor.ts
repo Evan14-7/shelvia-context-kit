@@ -5,9 +5,10 @@
  */
 
 import type { ContextPack } from "../types.js";
-import { section, decisionLines, bulletLines, capitalize } from "../render.js";
+import { section, decisionLines, bulletLines, capitalize, sanitizePack } from "../render.js";
 
-export function exportCursor(pack: ContextPack): string {
+export function exportCursor(raw: ContextPack): string {
+  const pack = sanitizePack(raw);
   const body: string[] = ["# Project context"];
   body.push(...section("Current task", [pack.task ?? "(none set)"]));
   if (pack.work_phase) body.push(...section("Phase", [capitalize(pack.work_phase)]));

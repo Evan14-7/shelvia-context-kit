@@ -50,14 +50,13 @@ This repo is a working toolkit, not just a spec:
 - **A CLI** — `validate`, `render`, `export`.
 - **CI** that builds, tests, and validates every example on each push.
 
-## Install and use
+## Install
 
 ```bash
-npm install          # builds the package (TypeScript -> dist)
-npm run build        # compile
-npm test             # run the test suite
-npm run validate:examples   # every example conforms to the schema
+npm install @shelviahq/context-pack
 ```
+
+Node 18+. Ships with TypeScript declarations and a `shelvia-context-pack` CLI.
 
 ### As a library
 
@@ -88,6 +87,32 @@ npx @shelviahq/context-pack export   examples/basic/context-pack.json --target c
 
 `validate` exits `0` when the pack is valid and non-zero (with readable errors)
 when it is not, so it drops straight into a pre-commit hook or CI.
+
+### What each export target produces
+
+One pack, several views — each is a transform of the same reviewed JSON, and the
+output is worded for how the target tool consumes it:
+
+| Target | Output | Use it as |
+|---|---|---|
+| `claude` | a `CLAUDE.md`-style project-context file | drop into a repo for Claude / Claude Code to read as standing project context (not a chat message) |
+| `codex` | an `AGENTS.md` file | the `AGENTS.md` that OpenAI Codex and other AGENTS.md readers pick up |
+| `cursor` | a Cursor rule (`.mdc`, with frontmatter) | a project rule under `.cursor/rules/` |
+| `chatgpt` | paste-ready Markdown | paste into a ChatGPT thread or a Project's custom instructions as background |
+
+`renderMarkdown` produces the neutral, tool-agnostic Markdown view when you just
+want a readable brief rather than a tool-specific file.
+
+### Local development
+
+```bash
+git clone https://github.com/Evan14-7/shelvia-context-kit
+cd shelvia-context-kit
+npm install                 # install deps and build (TypeScript -> dist)
+npm run build               # compile
+npm test                    # run the test suite
+npm run validate:examples   # every example conforms to the schema
+```
 
 ## Who it is for
 

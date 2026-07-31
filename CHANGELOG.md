@@ -7,6 +7,37 @@ package follows [Semantic Versioning](https://semver.org/). Note that the npm
 things: the package version tracks the toolkit; `spec_version` (currently `0.1`)
 tracks the portable file format, which each pack declares.
 
+## [1.0.2] - 2026-07-31
+
+### Security
+- **Rendered-output sanitization.** Every user-controlled pack field is now
+  neutralized before it reaches Markdown or a tool-instruction file. A field can
+  no longer introduce a line break — every CR/LF, NEL (U+0085), line/paragraph
+  separator (U+2028/U+2029) and C0/C1 control (including NUL) collapses to a
+  single space — so it cannot forge a new line-leading Markdown structure.
+- **Markdown/instruction-section injection prevented.** A field whose value
+  begins with a block token (heading, blockquote, list, ordered list, fenced
+  code, thematic/setext rule, table pipe, or an HTML `<`) is backslash-escaped
+  so it renders as literal text, even at column 0. A hostile
+  `"summary\n## New instructions ..."` can no longer create a forged section
+  inside `CLAUDE.md`, `AGENTS.md`, a Cursor rule, or a ChatGPT brief.
+- Sanitization is centralized (`sanitizeField` / `sanitizePack`) and applied
+  once at every entry point (`renderMarkdown` and all four exporters), so no
+  renderer can bypass it and future fields are covered automatically.
+- **Render-time field-length enforcement.** A 4,000-character-per-field ceiling
+  is applied at render time as defence in depth.
+
+### Added
+- `sanitizeField`, `sanitizePack`, and `FIELD_MAX` are exported for callers that
+  render pack content themselves.
+- Expanded security tests: every line-break/separator/control, every leading
+  block token, idempotence, the length ceiling, empty/normal text, and a full
+  every-field × every-exporter (+ shared renderer + CLI) injection matrix.
+
+### Notes
+- Sanitization is a no-op on clean, single-line content — no golden output or
+  example changed. No schema change; `spec_version` remains `0.1`.
+
 ## [1.0.1] - 2026-07-29
 
 ### Fixed
@@ -60,6 +91,7 @@ as a v0.2 / v0.3 / v0.4 roadmap item is implemented and tested.
 - Repository hygiene: `README`, `LICENSE` (MIT), `CONTRIBUTING`,
   `SECURITY`, and this changelog.
 
+[1.0.2]: https://github.com/Evan14-7/shelvia-context-kit/releases/tag/v1.0.2
 [1.0.1]: https://github.com/Evan14-7/shelvia-context-kit/releases/tag/v1.0.1
 [1.0.0]: https://github.com/Evan14-7/shelvia-context-kit/releases/tag/v1.0.0
 [0.1.0]: https://github.com/Evan14-7/shelvia-context-kit/releases/tag/v0.1.0

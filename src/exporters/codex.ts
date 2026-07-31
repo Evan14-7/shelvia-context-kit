@@ -4,9 +4,10 @@
  */
 
 import type { ContextPack } from "../types.js";
-import { section, decisionLines, bulletLines, capitalize } from "../render.js";
+import { section, decisionLines, bulletLines, capitalize, sanitizePack } from "../render.js";
 
-export function exportCodex(pack: ContextPack): string {
+export function exportCodex(raw: ContextPack): string {
+  const pack = sanitizePack(raw);
   const lines: string[] = ["# AGENTS.md"];
   lines.push(...section("Project context", [pack.project_summary]));
   lines.push(...section("Current task", [pack.task ?? "(none set)"]));

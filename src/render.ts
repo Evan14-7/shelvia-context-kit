@@ -6,6 +6,58 @@
 
 import type { ContextPack, Decision, Source } from "./types.js";
 
+/** Defence-in-depth per-field length ceiling, enforced at render time. */
+export const FIELD_MAX = 4000;
+
+/**
+ * Neutralize ONE Context Pack field for safe embedding in rendered Markdown or
+ * tool-instruction output. Two guarantees:
+ *   1. No line breaks. Every CR/LF, NEL (U+0085), line/paragraph separator
+ *      (U+2028/U+2029) and C0/C1 control (incl. NUL) collapses to a single
+ *      space, so a value can never span lines - and therefore can never START
+ *      a new line-leading Markdown structure.
+ *   2. No leading block token. If the trimmed value itself begins with a
+ *      Markdown block marker (ATX heading, blockquote, list bullet, ordered
+ *      list, fenced code, thematic/setext rule, table pipe, or an HTML "<"),
+ *      it is backslash-escaped so it renders as literal text even when placed
+ *      at column 0 (e.g. as a section value).
+ * Idempotent: sanitizeField(sanitizeField(x)) === sanitizeField(x).
+ * A no-op on clean single-line text under the ceiling.
+ */
+export function sanitizeField(input: unknown): string {
+  if (input == null) return "";
+  let s = String(input);
+  // (1) Collapse every line-break / separator / control run to a single space:
+  //     \x00-\x1F = C0 controls (CR, LF, TAB, NUL, ...); \x7F = DEL;
+  //     \x80-\x9F = C1 controls (incl. NEL \x85); \u2028 = LS; \u2029 = PS.
+  s = s.replace(/[\x00-\x1F\x7F-\x9F\u2028\u2029]+/g, " ").trim();
+  // (2) Escape a leading block-structural token so it cannot open a structure.
+  s = s.replace(
+    /^(#{1,6}(?=\s|$)|>|[-+*](?=\s|$)|\d+[.)](?=\s)|`{3,}|~{3,}|<|\||-{3,}|_{3,}|={2,}(?=\s|$)|\*{3,})/,
+    "\\$&"
+  );
+  // (3) Defence-in-depth length ceiling.
+  if (s.length > FIELD_MAX) s = s.slice(0, FIELD_MAX);
+  return s;
+}
+
+/**
+ * Return a structurally identical pack with EVERY string field neutralized via
+ * sanitizeField. Centralized here so no renderer or exporter can accidentally
+ * bypass it: each entry point sanitizes the whole pack once, so every current
+ * and future field is covered automatically. Non-string values pass through.
+ */
+export function sanitizePack<T>(value: T): T {
+  if (typeof value === "string") return sanitizeField(value) as unknown as T;
+  if (Array.isArray(value)) return value.map((v) => sanitizePack(v)) as unknown as T;
+  if (value && typeof value === "object") {
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(value as Record<string, unknown>)) out[k] = sanitizePack(v);
+    return out as T;
+  }
+  return value;
+}
+
 export function capitalize(s: string): string {
   return s.length ? s.charAt(0).toUpperCase() + s.slice(1) : s;
 }
@@ -78,9 +130,11 @@ export function assistantLabel(type: string): string {
 
 /**
  * The canonical full-pack Markdown. Every renderer/exporter is a view of the
- * same data; this is the neutral one.
+ * same data; this is the neutral one. Sanitizes the whole pack first so no
+ * field can inject a new line or a line-leading Markdown structure.
  */
-export function renderMarkdown(pack: ContextPack): string {
+export function renderMarkdown(raw: ContextPack): string {
+  const pack = sanitizePack(raw);
   const lines: string[] = ["# Project Context Pack"];
 
   if (pack.category && pack.category !== "general") lines.push("", `_Focus: ${capitalize(pack.category)}_`);

@@ -41,6 +41,18 @@ protection is not a claim of end-to-end prompt-injection prevention in the AI
 tool that ultimately reads the file — packs must still carry only reviewed,
 human-approved content.
 
+As of `1.0.3`: a source URL only becomes a followable link when its scheme is
+`http`/`https` (`safeUrl` + a schema `pattern`); dangerous schemes
+(`javascript:`, `data:`, `file:`, …) render as plain text. Inputs are bounded —
+the CLI rejects files over 5 MB before parsing, arrays are capped at render
+(`MAX_ITEMS`), and the schema enforces `maxItems`/`maxLength` — so an oversized
+pack can't exhaust memory.
+
+**Schema-valid does not mean trusted.** A Context Pack is untrusted input. These
+protections harden the JSON→instruction-file conversion; the AI tool that reads
+the output must still treat pack content as DATA, not as higher-priority
+executable instructions.
+
 Out of scope:
 
 - issues related to the hosted product at Shelvia.net
@@ -55,7 +67,7 @@ Do not place secrets, credentials, API keys, passwords, tokens, private keys, or
 ## Supported versions
 
 Two version numbers track different things: the **npm package** (`@shelviahq/context-pack`,
-currently `1.0.2`) tracks the toolkit implementation, while the **Context Pack format**
+currently `1.0.3`) tracks the toolkit implementation, while the **Context Pack format**
 (`spec_version`, currently `0.1`) tracks the portable file format.
 
 Security fixes land on the latest `1.0.x` release. Older releases are not maintained.

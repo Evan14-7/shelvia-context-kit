@@ -7,6 +7,31 @@ package follows [Semantic Versioning](https://semver.org/). Note that the npm
 things: the package version tracks the toolkit; `spec_version` (currently `0.1`)
 tracks the portable file format, which each pack declares.
 
+## [1.0.3] - 2026-08-02
+
+### Security
+- **URL-scheme allowlist.** A source URL only becomes a followable Markdown link
+  when its scheme is `http`/`https` (`safeUrl`). A dangerous scheme
+  (`javascript:`, `data:`, `file:`, `vbscript:`, scheme-relative `//host`, …) is
+  rendered as plain text, never a link — so a hostile pack can't turn a "source"
+  into a clickable/agent-followable payload. Enforced at render AND, defence in
+  depth, at validation (`pattern: "^https?://"` on `source.url`).
+- **Input-size cap (DoS).** The CLI rejects files over 5 MB *before* reading or
+  parsing them (`statSync` pre-check), so an oversized pack can't exhaust memory.
+- **Bounded rendering.** Arrays are capped at render time (`MAX_ITEMS = 1000`)
+  and the schema now sets `maxItems` / `maxLength` on arrays and strings — so a
+  pack with hundreds of thousands of items or huge strings can't blow up the
+  output, even when the caller skipped validation.
+- **Expanded adversarial tests** (83 total): `javascript:`/`data:`/`file:` URLs,
+  oversized arrays + strings, the URL-scheme schema pattern, and a proof that the
+  Cursor exporter's YAML frontmatter is static (no pack value reaches it).
+
+### Notes
+- **Schema-valid does not mean trusted.** A Context Pack is untrusted input;
+  these limits harden the JSON→instruction-file boundary but the consuming AI
+  tool must still treat pack content as DATA, not higher-priority instructions.
+- No `spec_version` change (still `0.1`). No golden output or example changed.
+
 ## [1.0.2] - 2026-07-31
 
 ### Security
@@ -91,6 +116,7 @@ as a v0.2 / v0.3 / v0.4 roadmap item is implemented and tested.
 - Repository hygiene: `README`, `LICENSE` (MIT), `CONTRIBUTING`,
   `SECURITY`, and this changelog.
 
+[1.0.3]: https://github.com/Evan14-7/shelvia-context-kit/releases/tag/v1.0.3
 [1.0.2]: https://github.com/Evan14-7/shelvia-context-kit/releases/tag/v1.0.2
 [1.0.1]: https://github.com/Evan14-7/shelvia-context-kit/releases/tag/v1.0.1
 [1.0.0]: https://github.com/Evan14-7/shelvia-context-kit/releases/tag/v1.0.0

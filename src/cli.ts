@@ -9,7 +9,7 @@
  * Exit code 0 on success, non-zero on any failure. Messages are human-readable.
  */
 
-import { readFileSync } from "node:fs";
+import { readFileSync, statSync } from "node:fs";
 import { validateContextPack } from "./validate.js";
 import { renderMarkdown } from "./render.js";
 import { exportPack, EXPORT_TARGETS } from "./index.js";
@@ -29,7 +29,21 @@ function err(msg: string): void {
   process.stderr.write(`${msg}\n`);
 }
 
+/** Reject oversized inputs BEFORE reading/parsing them into memory — a Context
+ *  Pack is small; a huge file is either a mistake or a memory-exhaustion DoS. */
+const MAX_FILE_BYTES = 5_000_000; // 5 MB
+
 function readPack(file: string): { pack?: ContextPack; errorCode?: number } {
+  try {
+    const { size } = statSync(file);
+    if (size > MAX_FILE_BYTES) {
+      err(`${file} is too large (${size} bytes; limit ${MAX_FILE_BYTES}). A Context Pack should be well under this.`);
+      return { errorCode: 1 };
+    }
+  } catch {
+    err(`Could not read file: ${file}`);
+    return { errorCode: 1 };
+  }
   let raw: string;
   try {
     raw = readFileSync(file, "utf8");

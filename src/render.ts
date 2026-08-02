@@ -9,6 +9,29 @@ import type { ContextPack, Decision, Source } from "./types.js";
 /** Defence-in-depth per-field length ceiling, enforced at render time. */
 export const FIELD_MAX = 4000;
 
+/** Defence-in-depth per-array item ceiling, enforced at render time so an
+ *  oversized pack (thousands of constraints/decisions/sources) can't blow up
+ *  the rendered output even when the caller skipped schema validation. */
+export const MAX_ITEMS = 1000;
+
+/** Cap an array to MAX_ITEMS for rendering (bounds output size). */
+function capItems<T>(items: readonly T[] | undefined): T[] {
+  const arr = items ?? [];
+  return arr.length > MAX_ITEMS ? arr.slice(0, MAX_ITEMS) : arr.slice();
+}
+
+/**
+ * A URL that is safe to render as a followable Markdown link: only http(s).
+ * A dangerous scheme (javascript:, data:, file:, vbscript:, mailto:, a
+ * scheme-relative //host, or anything malformed) yields null, and the caller
+ * emits the label as PLAIN TEXT instead of a link — so a hostile pack can't
+ * turn a "source" into a clickable/agent-followable javascript: payload.
+ */
+export function safeUrl(u: unknown): string | null {
+  const s = String(u ?? "").trim();
+  return /^https?:\/\//i.test(s) ? s : null;
+}
+
 /**
  * Neutralize ONE Context Pack field for safe embedding in rendered Markdown or
  * tool-instruction output. Two guarantees:
@@ -71,13 +94,13 @@ export function section(heading: string, lines: string[]): string[] {
 
 export function decisionLines(decisions: Decision[] | undefined): string[] {
   const out: string[] = [];
-  for (const d of decisions ?? []) {
+  for (const d of capItems(decisions)) {
     const tail = d.body ? ` — ${d.body}` : "";
     out.push(`- **${d.title}**${tail}`);
     if (d.rationale) out.push(`  - Why: ${d.rationale}`);
     if (d.tradeoffs) out.push(`  - Tradeoff: ${d.tradeoffs}`);
     if (d.outcome) out.push(`  - Outcome: ${d.outcome}`);
-    for (const ev of d.evidence ?? []) {
+    for (const ev of capItems(d.evidence)) {
       const src = ev.source ? ` (${ev.source})` : "";
       out.push(`  - Backed by: ${ev.claim}${src}`);
     }
@@ -102,16 +125,18 @@ export function mdUrl(u: string): string {
 
 export function sourceLines(sources: Source[] | undefined): string[] {
   const out: string[] = [];
-  for (const s of sources ?? []) {
+  for (const s of capItems(sources)) {
     const grade = s.trust_grade ? ` — _${s.trust_grade}_` : "";
-    out.push(s.url ? `- [${mdInline(s.label)}](${mdUrl(s.url)})${grade}` : `- ${mdInline(s.label)}${grade}`);
+    // Only a safe http(s) URL becomes a link; anything else renders as text.
+    const url = s.url ? safeUrl(s.url) : null;
+    out.push(url ? `- [${mdInline(s.label)}](${mdUrl(url)})${grade}` : `- ${mdInline(s.label)}${grade}`);
     if (s.bound_claim) out.push(`  - Backs: ${s.bound_claim}`);
   }
   return out;
 }
 
 export function bulletLines(items: string[] | undefined): string[] {
-  return (items ?? []).map((i) => `- ${i}`);
+  return capItems(items).map((i) => `- ${i}`);
 }
 
 const ASSISTANT_LABEL: Record<string, string> = {
@@ -153,7 +178,7 @@ export function renderMarkdown(raw: ContextPack): string {
   lines.push(
     ...section(
       "Best prompts",
-      (pack.prompts ?? []).map((p) => `- ${p.tool ? `_(${p.tool})_ ` : ""}${p.text}`)
+      capItems(pack.prompts).map((p) => `- ${p.tool ? `_(${p.tool})_ ` : ""}${p.text}`)
     )
   );
   lines.push(...section("Constraints", bulletLines(pack.constraints)));
@@ -164,7 +189,7 @@ export function renderMarkdown(raw: ContextPack): string {
   lines.push(
     ...section(
       "Version history",
-      (pack.version_history ?? []).map(
+      capItems(pack.version_history).map(
         (v) => `- **${v.label}** _(${v.status})_${v.summary ? ` — ${v.summary}` : ""}`
       )
     )

@@ -36,59 +36,71 @@
     "project_summary": {
       "type": "string",
       "minLength": 1,
+      "maxLength": 20000,
       "description": "A short plain-language description of the project."
     },
     "current_direction": {
       "type": ["string", "null"],
+      "maxLength": 20000,
       "description": "Where the project is heading right now."
     },
     "decisions": {
       "type": "array",
+      "maxItems": 1000,
       "description": "Approved decisions, with reasoning carried alongside.",
       "items": { "$ref": "#/$defs/decision" }
     },
     "sources": {
       "type": "array",
+      "maxItems": 1000,
       "description": "Trusted sources backing the work.",
       "items": { "$ref": "#/$defs/source" }
     },
     "prompts": {
       "type": "array",
+      "maxItems": 1000,
       "description": "Reusable prompts that worked well for this project.",
       "items": { "$ref": "#/$defs/prompt" }
     },
     "constraints": {
       "type": "array",
+      "maxItems": 1000,
       "description": "Hard rules the next tool must respect.",
-      "items": { "type": "string" }
+      "items": { "type": "string", "maxLength": 8000 }
     },
     "boundaries": {
       "type": "array",
+      "maxItems": 1000,
       "description": "Stated guardrails for this handoff.",
-      "items": { "type": "string" }
+      "items": { "type": "string", "maxLength": 8000 }
     },
     "what_to_avoid": {
       "type": "array",
+      "maxItems": 1000,
       "description": "Approaches already ruled out.",
-      "items": { "type": "string" }
+      "items": { "type": "string", "maxLength": 8000 }
     },
     "open_questions": {
       "type": "array",
+      "maxItems": 1000,
       "description": "Unresolved questions the next tool should be aware of.",
-      "items": { "type": "string" }
+      "items": { "type": "string", "maxLength": 8000 }
     },
     "next_steps": {
       "type": "array",
+      "maxItems": 1000,
       "description": "The recommended next actions.",
-      "items": { "type": "string" }
+      "items": { "type": "string", "maxLength": 8000 }
     },
     "version_history": {
       "type": "array",
+      "maxItems": 1000,
       "description": "Notable prior versions or milestones.",
       "items": { "$ref": "#/$defs/version_entry" }
     },
     "definition_of_done": {
       "type": ["string", "null"],
+      "maxLength": 20000,
       "description": "How the next tool will know the task succeeded."
     },
     "recommended_assistant": {
@@ -119,6 +131,7 @@
         "outcome": { "type": ["string", "null"] },
         "evidence": {
           "type": "array",
+      "maxItems": 1000,
           "items": {
             "type": "object",
             "additionalProperties": false,
@@ -137,8 +150,8 @@
       "required": ["label", "url"],
       "properties": {
         "id": { "type": "string" },
-        "label": { "type": "string", "minLength": 1 },
-        "url": { "type": "string", "format": "uri" },
+        "label": { "type": "string", "minLength": 1, "maxLength": 2000 },
+        "url": { "type": "string", "format": "uri", "maxLength": 4000, "pattern": "^https?://" },
         "trust_grade": {
           "type": "string",
           "enum": ["primary", "reputable", "community", "unverified"],

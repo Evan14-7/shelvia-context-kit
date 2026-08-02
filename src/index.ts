@@ -27,7 +27,7 @@ export {
   type ValidationError,
 } from "./validate.js";
 
-export { renderMarkdown, sanitizeField, sanitizePack, FIELD_MAX } from "./render.js";
+export { renderMarkdown, sanitizeField, sanitizePack, safeUrl, FIELD_MAX, MAX_ITEMS } from "./render.js";
 
 export { exportChatGPT } from "./exporters/chatgpt.js";
 export { exportClaude } from "./exporters/claude.js";
